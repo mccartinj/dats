@@ -4,6 +4,8 @@ logs
 
 # Data output
 *.csv
+*.png
+*.jpg
 
 # Runtime data
 pids
