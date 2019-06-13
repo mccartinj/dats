@@ -3,6 +3,7 @@ logs
 *.log
 
 # Data output
+export
 *.csv
 *.png
 *.jpg
