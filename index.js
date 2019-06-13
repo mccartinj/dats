@@ -5,13 +5,13 @@ const cheerio = require('cheerio');
 const objectsToCsv = require('objects-to-csv');
 
 //DECLARE STREET NAME
-const selected_streets = ['Heath','barney','Jackson','Belt','Randall','Byrd','Webster','William','Johnson','Durst','Jackson','Wells','Covington','Boyle','Olive','Birckhead','Clement','Battery','Riverside','Gittings'];
+const selected_streets = ['Heath','Barney','Jackson','Belt','Randall','Byrd','Webster','William','Johnson','Durst','Jackson','Wells','Covington','Boyle','Olive','Birckhead','Clement','Battery','Riverside','Gittings'];
 
 (async () => {
 	//wrapped in a try to catch errors
 	try {
 		//load pupputeer
-		const browser = await puppeteer.launch({headless: false});
+		const browser = await puppeteer.launch({headless: true});
 
 		//
 		for ( let street_iterator = 0; street_iterator < selected_streets.length; street_iterator++) {
