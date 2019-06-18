@@ -38,16 +38,16 @@ const selected_streets = ['Heath','Barney'];
 			const pager_links = await page.$$('tr.Pager td table tbody tr td a');
 			let num_links = pager_links.length / 2;
 			//console.log(num_links);
-			//num_links+1
-			for (let p = 0; p < 1; p++) {
+			//
+			for (let p = 0; p < num_links+1; p++) {
 
 					let page_num = p+1;
 				
 					await page.waitFor(2000);
 					//await page.screenshot({path: page_num+'.png'})
 
-					//links.length
-					for (let i = 0; i < 3 ; i++) {
+					//
+					for (let i = 0; i < links.length ; i++) {
 						
 						let propdata = {};
 
@@ -127,17 +127,17 @@ const selected_streets = ['Heath','Barney'];
 
 			} // end loop through pages of a single street
 
-		//export to csv
+			//export to csv
 			let csv = new objectsToCsv(all_data);
 			await csv.toDisk('./export/'+selected_streets[street_iterator]+'.csv',header=true)
 			
 
-			await browser.close();	
+		
 		  	
 
 
 		} // end loop of selected streets
-		
+		await browser.close();	
 
   //log errors
   } catch(error) {
