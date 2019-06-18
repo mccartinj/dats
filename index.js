@@ -6,8 +6,11 @@ const objectsToCsv = require('objects-to-csv');
 const csvMerger = require('csv-merger');
 
 //DECLARE STREET NAME
-//const selected_streets = ['Heath','Barney','Jackson','Belt','Randall','Byrd','Webster','William','Johnson','Durst','Jackson','Wells','Covington','Boyle','Olive','Birckhead','Clement','Battery','Riverside','Gittings'];
-const selected_streets = ['Heath','Barney'];
+//const selected_streets = ['Johnson','Durst','Jackson','Wells','Covington','Boyle','Olive','Birckhead','Clement','Battery','Riverside','Gittings'];
+//barney, jackson
+//belt, randall, webster
+//heath, byrd, william
+const selected_streets = ['Johnson','Durst','Jackson'];
 
 (async () => {
 	//wrapped in a try to catch errors
@@ -15,7 +18,7 @@ const selected_streets = ['Heath','Barney'];
 		//load pupputeer
 		const browser = await puppeteer.launch({headless: false});
 
-		//
+		//selected_streets.length
 		for ( let street_iterator = 0; street_iterator < selected_streets.length; street_iterator++) {
 
 			const page = await browser.newPage();
@@ -31,25 +34,30 @@ const selected_streets = ['Heath','Barney'];
 			await page.waitFor('a#MainContent_MainContent_cphMainContentArea_ucSearchType_wzrdRealPropertySearch_ucSearchResult_gv_SearchResult_lnkDetails_0');
 
 			//collect links and create an array to hold info from each card
-			const links = await page.$$('a.lnkdetails');
+			
 			var all_data= [];
 
 
 			const pager_links = await page.$$('tr.Pager td table tbody tr td a');
 			let num_links = pager_links.length / 2;
-			//console.log(num_links);
-			//
+			
+
+			//num_links+1
 			for (let p = 0; p < num_links+1; p++) {
 
 					let page_num = p+1;
-				
+					
 					await page.waitFor(2000);
 					//await page.screenshot({path: page_num+'.png'})
 
-					//
+					//links.length
+					let links = await page.$$('a.lnkdetails');
+					console.log(links.length)
 					for (let i = 0; i < links.length ; i++) {
 						
 						let propdata = {};
+
+						console.log(i)
 
 						
 						await page.waitFor('a#MainContent_MainContent_cphMainContentArea_ucSearchType_wzrdRealPropertySearch_ucSearchResult_gv_SearchResult_lnkDetails_'+i);
@@ -118,7 +126,10 @@ const selected_streets = ['Heath','Barney'];
 						//don't click anything
 					} else {
 						let p_plus = p+2;
+						//await page.waitFor(2000);
+						//let p_plus = p+2;
 						await page.$eval('tr.Pager table td:nth-child('+p_plus+') a', element => element.click());
+				
 					}
 					
 			
