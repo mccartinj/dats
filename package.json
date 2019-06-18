@@ -5,7 +5,9 @@
   "main": "index.js",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
+    "csv-merger": "^0.1.4",
     "json2csv": "^4.5.1",
+    "merge-csv": "^1.0.3",
     "objects-to-csv": "^1.2.2",
     "puppeteer": "^1.2.0"
   },

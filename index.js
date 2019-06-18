@@ -3,15 +3,17 @@
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const objectsToCsv = require('objects-to-csv');
+const csvMerger = require('csv-merger');
 
 //DECLARE STREET NAME
-const selected_streets = ['Heath','Barney','Jackson','Belt','Randall','Byrd','Webster','William','Johnson','Durst','Jackson','Wells','Covington','Boyle','Olive','Birckhead','Clement','Battery','Riverside','Gittings'];
+//const selected_streets = ['Heath','Barney','Jackson','Belt','Randall','Byrd','Webster','William','Johnson','Durst','Jackson','Wells','Covington','Boyle','Olive','Birckhead','Clement','Battery','Riverside','Gittings'];
+const selected_streets = ['Heath','Barney'];
 
 (async () => {
 	//wrapped in a try to catch errors
 	try {
 		//load pupputeer
-		const browser = await puppeteer.launch({headless: true});
+		const browser = await puppeteer.launch({headless: false});
 
 		//
 		for ( let street_iterator = 0; street_iterator < selected_streets.length; street_iterator++) {
@@ -36,24 +38,26 @@ const selected_streets = ['Heath','Barney','Jackson','Belt','Randall','Byrd','We
 			const pager_links = await page.$$('tr.Pager td table tbody tr td a');
 			let num_links = pager_links.length / 2;
 			//console.log(num_links);
-
-			for (let p = 0; p < num_links+1; p++) {
+			//num_links+1
+			for (let p = 0; p < 1; p++) {
 
 					let page_num = p+1;
 				
 					await page.waitFor(2000);
 					//await page.screenshot({path: page_num+'.png'})
 
-					//
-					for (let i = 0; i < links.length; i++) {
+					//links.length
+					for (let i = 0; i < 3 ; i++) {
 						
 						let propdata = {};
 
 						
-
+						await page.waitFor('a#MainContent_MainContent_cphMainContentArea_ucSearchType_wzrdRealPropertySearch_ucSearchResult_gv_SearchResult_lnkDetails_'+i);
+						await page.waitFor(2000);
 						//click next link in line and wait for card to load
 						await page.click('a#MainContent_MainContent_cphMainContentArea_ucSearchType_wzrdRealPropertySearch_ucSearchResult_gv_SearchResult_lnkDetails_'+i);
 						await page.waitFor(2000);
+						await page.waitFor('span#MainContent_MainContent_cphMainContentArea_ucSearchType_wzrdRealPropertySearch_ucDetailsSearch_dlstDetaisSearch_lblPremisesAddress_0',{visible:true})
 
 						//throw sdat card into cheerio (node's version of jquery) for easy traversing
 						let content = await page.content()
@@ -100,14 +104,16 @@ const selected_streets = ['Heath','Barney','Jackson','Belt','Randall','Byrd','We
 
 						
 
-
+						await page.waitFor(2000)
+						await page.waitFor('input#MainContent_MainContent_cphMainContentArea_ucSearchType_wzrdRealPropertySearch_btnPrevious_top2')
 						//go back, but not with the browser's back button, since sdat isn't set up like that
 						await page.click('input#MainContent_MainContent_cphMainContentArea_ucSearchType_wzrdRealPropertySearch_btnPrevious_top2')
 						await page.waitFor(2000);
-					}
+					
+					} //end loop of single page
 
 
-
+					//click  on next page
 					if (page_num == num_links+1) {
 						//don't click anything
 					} else {
@@ -115,17 +121,23 @@ const selected_streets = ['Heath','Barney','Jackson','Belt','Randall','Byrd','We
 						await page.$eval('tr.Pager table td:nth-child('+p_plus+') a', element => element.click());
 					}
 					
-			}
-
 			
+			
+
+
+			} // end loop through pages of a single street
+
+		//export to csv
+			let csv = new objectsToCsv(all_data);
+			await csv.toDisk('./export/'+selected_streets[street_iterator]+'.csv',header=true)
+			
+
+			await browser.close();	
 		  	
 
 
-		}
-		//export to csv
-		let csv = new objectsToCsv(all_data);
-		await csv.toDisk('./export/data.csv',header=true)
-		await browser.close();	
+		} // end loop of selected streets
+		
 
   //log errors
   } catch(error) {
